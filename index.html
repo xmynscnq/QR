@@ -96,10 +96,16 @@ details summary {
 <!-- 模板 -->
 <div class="section">
 <h3>快速模板</h3>
-<button class="template-btn" onclick="preset('classic')">经典黑白</button>
-<button class="template-btn" onclick="preset('purple')">炫酷紫</button>
-<button class="template-btn" onclick="preset('green')">清新绿</button>
-<button class="template-btn" onclick="preset('gold')">高级金</button>
+<button onclick="preset('classic')">经典黑白</button>
+<button onclick="preset('purple')">炫酷紫</button>
+<button onclick="preset('green')">清新绿</button>
+<button onclick="preset('gold')">高级金</button>
+<button onclick="preset('blue')">科技蓝</button>
+<button onclick="preset('gray')">极简灰</button>
+<button onclick="preset('red')">热力红</button>
+<button onclick="preset('ocean')">海洋蓝绿</button>
+<button onclick="preset('neon')">夜间霓虹</button>
+<button onclick="preset('candy')">糖果色</button>
 </div>
 
 <!-- 外观 -->
@@ -194,6 +200,110 @@ let qr = new QRCodeStyling({
 
 qr.append(document.getElementById("qr"));
 
+const templates = {
+
+  classic:{
+    dots:"square",
+    gradientType:"linear",
+    color1:"#000000",
+    color2:"#000000",
+    corner:"square",
+    cornerDot:"square",
+    bg:"#ffffff"
+  },
+
+  purple:{
+    dots:"rounded",
+    gradientType:"linear",
+    color1:"#7F00FF",
+    color2:"#E100FF",
+    corner:"extra-rounded",
+    cornerDot:"dot",
+    bg:"#ffffff"
+  },
+
+  green:{
+    dots:"dots",
+    gradientType:"radial",
+    color1:"#00c853",
+    color2:"#b2ff59",
+    corner:"dot",
+    cornerDot:"dot",
+    bg:"#ffffff"
+  },
+
+  gold:{
+    dots:"classy",
+    gradientType:"linear",
+    color1:"#d4af37",
+    color2:"#ffd700",
+    corner:"extra-rounded",
+    cornerDot:"square",
+    bg:"#000000"
+  },
+
+  blue:{
+    dots:"rounded",
+    gradientType:"linear",
+    color1:"#00c6ff",
+    color2:"#0072ff",
+    corner:"extra-rounded",
+    cornerDot:"dot",
+    bg:"#ffffff"
+  },
+
+  gray:{
+    dots:"square",
+    gradientType:"linear",
+    color1:"#444",
+    color2:"#999",
+    corner:"square",
+    cornerDot:"square",
+    bg:"#ffffff"
+  },
+
+  red:{
+    dots:"dots",
+    gradientType:"radial",
+    color1:"#ff1744",
+    color2:"#ff8a80",
+    corner:"dot",
+    cornerDot:"dot",
+    bg:"#ffffff"
+  },
+
+  ocean:{
+    dots:"rounded",
+    gradientType:"linear",
+    color1:"#00f2fe",
+    color2:"#4facfe",
+    corner:"extra-rounded",
+    cornerDot:"dot",
+    bg:"#ffffff"
+  },
+
+  neon:{
+    dots:"classy",
+    gradientType:"linear",
+    color1:"#00ffff",
+    color2:"#ff00ff",
+    corner:"extra-rounded",
+    cornerDot:"dot",
+    bg:"#000000"
+  },
+
+  candy:{
+    dots:"dots",
+    gradientType:"radial",
+    color1:"#ff9a9e",
+    color2:"#fad0c4",
+    corner:"dot",
+    cornerDot:"dot",
+    bg:"#ffffff"
+  }
+
+};
+
 function updateQR(){
 
   const text = document.getElementById("text").value;
@@ -247,45 +357,26 @@ function updateQR(){
   });
 }
 
+// ⭐ 完整模板切换（核心）
+function preset(type){
+
+  const t = templates[type];
+
+  document.getElementById("dots").value = t.dots;
+  document.getElementById("gradientType").value = t.gradientType;
+  document.getElementById("color1").value = t.color1;
+  document.getElementById("color2").value = t.color2;
+  document.getElementById("corner").value = t.corner;
+  document.getElementById("cornerDot").value = t.cornerDot;
+  document.getElementById("bg").value = t.bg;
+
+  updateQR();
+}
+
 // 自动更新
 document.querySelectorAll("input,select").forEach(el=>{
   el.addEventListener("input",updateQR);
 });
-
-// 模板
-function preset(type){
-  if(type==="classic"){
-    qr.update({
-      dotsOptions:{color:"#000"},
-      backgroundOptions:{color:"#fff"}
-    });
-  }
-  if(type==="purple"){
-    qr.update({
-      dotsOptions:{
-        gradient:{
-          type:"linear",
-          colorStops:[
-            {offset:0,color:"#7F00FF"},
-            {offset:1,color:"#E100FF"}
-          ]
-        }
-      }
-    });
-  }
-  if(type==="green"){
-    qr.update({
-      dotsOptions:{color:"#00c853"},
-      backgroundOptions:{color:"#ffffff"}
-    });
-  }
-  if(type==="gold"){
-    qr.update({
-      dotsOptions:{color:"#d4af37"},
-      backgroundOptions:{color:"#000"}
-    });
-  }
-}
 
 function downloadPNG(){
   qr.download({name:"qr",extension:"png"});
