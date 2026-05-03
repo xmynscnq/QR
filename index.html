@@ -1,68 +1,265 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<title>二维码生成器 Pro</title>
+
+<script src="https://unpkg.com/qr-code-styling/lib/qr-code-styling.js"></script>
+
+<style>
+body {
+  margin:0;
+  font-family:-apple-system, BlinkMacSystemFont;
+  background:#0f172a;
+  color:#fff;
+}
+
+.container {
+  display:flex;
+  height:100vh;
+}
+
+.panel {
+  width:340px;
+  background:#111827;
+  padding:20px;
+  overflow:auto;
+}
+
+.preview {
+  flex:1;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+}
+
+.section {
+  margin-bottom:20px;
+}
+
+h2 {
+  margin-bottom:10px;
+}
+
+h3 {
+  font-size:14px;
+  color:#9ca3af;
+  margin-bottom:6px;
+}
+
+.desc {
+  font-size:12px;
+  color:#6b7280;
+  margin-bottom:8px;
+}
+
+input, select {
+  width:100%;
+  padding:10px;
+  margin-bottom:10px;
+  border-radius:10px;
+  border:none;
+  background:#1f2937;
+  color:#fff;
+}
+
+input[type="color"] {
+  height:40px;
+}
+
+button {
+  width:100%;
+  padding:12px;
+  border:none;
+  border-radius:12px;
+  margin-top:10px;
+  background:linear-gradient(45deg,#7F00FF,#E100FF);
+  color:#fff;
+  cursor:pointer;
+}
+
+.template-btn {
+  display:inline-block;
+  width:48%;
+  margin:2px;
+  padding:8px;
+  font-size:12px;
+}
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
 <div class="panel">
 
-<h2>🎯 二维码生成器</h2>
+<h2>🚀 二维码生成器</h2>
 <p class="desc">生成高质量、可自定义样式的二维码</p>
 
 <!-- 内容 -->
 <div class="section">
 <h3>内容</h3>
-<input id="text" placeholder="输入网址或文本">
+<p class="desc">输入网址或文本，扫码后将打开或显示该内容</p>
+<input id="text" placeholder="例如：https://example.com">
 </div>
 
-<!-- 样式 -->
+<!-- 模板 -->
 <div class="section">
-<h3>外观</h3>
+<h3>快速模板</h3>
+<p class="desc">一键生成漂亮样式</p>
+<button class="template-btn" onclick="preset('classic')">经典黑白</button>
+<button class="template-btn" onclick="preset('purple')">炫酷紫</button>
+<button class="template-btn" onclick="preset('green')">清新绿</button>
+<button class="template-btn" onclick="preset('gold')">高级金</button>
+</div>
+
+<!-- 外观 -->
+<div class="section">
+<h3>外观设计</h3>
 
 <label>点样式</label>
+<p class="desc">二维码小方块的形状</p>
 <select id="dots">
-  <option value="square">方块</option>
-  <option value="dots">圆点</option>
-  <option value="rounded">圆角</option>
-  <option value="classy">优雅</option>
+<option value="square">方块</option>
+<option value="dots">圆点</option>
+<option value="rounded">圆角</option>
+<option value="classy">优雅</option>
 </select>
 
-<label>渐变类型</label>
+<label>渐变</label>
+<p class="desc">颜色变化方式</p>
 <select id="gradientType">
-  <option value="linear">线性渐变</option>
-  <option value="radial">径向渐变</option>
+<option value="linear">线性渐变</option>
+<option value="radial">径向渐变</option>
 </select>
 
-<div class="color-group">
-<input type="color" id="color1">
-<input type="color" id="color2">
-</div>
+<input type="color" id="color1" value="#7F00FF">
+<input type="color" id="color2" value="#E100FF">
 
 </div>
 
 <!-- Logo -->
 <div class="section">
 <h3>Logo</h3>
+<p class="desc">中间插入图片（建议简单图标）</p>
 <input type="file" id="logo">
-<label>大小</label>
-<input type="range" id="logoSize" min="0" max="0.4" step="0.05">
+<label>大小（建议0.2）</label>
+<input type="range" id="logoSize" min="0" max="0.4" step="0.05" value="0.2">
 </div>
 
 <!-- 高级 -->
-<details class="section">
-<summary>高级设置</summary>
+<div class="section">
+<h3>高级设置</h3>
 
 <label>尺寸</label>
+<p class="desc">二维码图片大小（推荐300-500）</p>
 <input type="range" id="size" min="100" max="800" value="300">
 
 <label>纠错等级</label>
+<p class="desc">越高越稳定（推荐H）</p>
 <select id="ec">
 <option value="L">低</option>
 <option value="M">中</option>
 <option value="Q">高</option>
-<option value="H">最高（推荐）</option>
+<option value="H" selected>最高（推荐）</option>
 </select>
 
 <label>背景颜色</label>
-<input type="color" id="bg">
+<input type="color" id="bg" value="#000000">
 
-</details>
+</div>
 
 <button onclick="downloadPNG()">⬇ 下载 PNG</button>
 <button onclick="downloadSVG()">⬇ 下载 SVG</button>
 
 </div>
+
+<div class="preview">
+<div id="qr"></div>
+</div>
+
+</div>
+
+<script>
+
+let qr = new QRCodeStyling({
+  width:300,
+  height:300,
+  data:"https://example.com"
+});
+
+qr.append(document.getElementById("qr"));
+
+function updateQR(){
+  const text = document.getElementById("text").value;
+  const size = +document.getElementById("size").value;
+  const ec = document.getElementById("ec").value;
+  const dots = document.getElementById("dots").value;
+  const gradientType = document.getElementById("gradientType").value;
+  const color1 = document.getElementById("color1").value;
+  const color2 = document.getElementById("color2").value;
+  const bg = document.getElementById("bg").value;
+  const logoInput = document.getElementById("logo");
+  const logoSize = parseFloat(document.getElementById("logoSize").value);
+
+  let logoURL = "";
+  if (logoInput.files.length > 0) {
+    logoURL = URL.createObjectURL(logoInput.files[0]);
+  }
+
+  qr.update({
+    width:size,
+    height:size,
+    data:text,
+    qrOptions:{ errorCorrectionLevel:ec },
+    image:logoURL,
+    imageOptions:{ imageSize:logoSize, hideBackgroundDots:true },
+    dotsOptions:{
+      type:dots,
+      gradient:{
+        type:gradientType,
+        colorStops:[
+          {offset:0,color:color1},
+          {offset:1,color:color2}
+        ]
+      }
+    },
+    backgroundOptions:{ color:bg }
+  });
+}
+
+// 自动更新
+document.querySelectorAll("input,select").forEach(el=>{
+  el.addEventListener("input",updateQR);
+});
+
+// 模板
+function preset(type){
+  if(type==="classic"){
+    qr.update({ dotsOptions:{color:"#000"}, backgroundOptions:{color:"#fff"} })
+  }
+  if(type==="purple"){
+    qr.update({ dotsOptions:{gradient:{type:"linear",colorStops:[{offset:0,color:"#7F00FF"},{offset:1,color:"#E100FF"}]}} })
+  }
+  if(type==="green"){
+    qr.update({ dotsOptions:{color:"#00c853"}, backgroundOptions:{color:"#ffffff"} })
+  }
+  if(type==="gold"){
+    qr.update({ dotsOptions:{color:"#d4af37"}, backgroundOptions:{color:"#000000"} })
+  }
+}
+
+// 下载
+function downloadPNG(){
+  qr.download({name:"qr",extension:"png"});
+}
+function downloadSVG(){
+  qr.download({name:"qr",extension:"svg"});
+}
+
+</script>
+
+</body>
+</html>
