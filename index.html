@@ -635,6 +635,7 @@ input[type="range"]::-webkit-slider-thumb {
         <option value="square">方块</option>
         <option value="dots">圆点</option>
         <option value="rounded">圆角</option>
+        <option value="extra-rounded">超圆角</option>
         <option value="classy">优雅</option>
         <option value="classy-rounded">优雅圆角</option>
       </select>
@@ -652,11 +653,11 @@ input[type="range"]::-webkit-slider-thumb {
       <label class="field-label">渐变颜色</label>
       <div class="color-row">
         <div class="color-swatch" title="起始色">
-          <input type="color" id="color1" value="#7F00FF">
+          <input type="color" id="color1" value="#000000">
         </div>
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#5a5f72" stroke-width="2" style="flex-shrink:0"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
         <div class="color-swatch" title="结束色">
-          <input type="color" id="color2" value="#E100FF">
+          <input type="color" id="color2" value="#000000">
         </div>
       </div>
     </div>
@@ -800,31 +801,38 @@ input[type="range"]::-webkit-slider-thumb {
 </div>
 
 <script>
-// ── QR init (FIXED preview size, always 280px) ──
+// ── QR init — 默认黑白经典 ──
 const PREVIEW_PX = 360;
 
-let qr = new QRCodeStyling({ width: PREVIEW_PX, height: PREVIEW_PX, data: "https://example.com" });
+let qr = new QRCodeStyling({
+  width: PREVIEW_PX, height: PREVIEW_PX,
+  data: "https://example.com",
+  dotsOptions: { type: "square", color: "#000000" },
+  cornersSquareOptions: { type: "square" },
+  cornersDotOptions: { type: "square" },
+  backgroundOptions: { color: "#ffffff" }
+});
 qr.append(document.getElementById("qr"));
 
 // ── CM conversion ──
 function updateCm() {
-  const px = parseInt(document.getElementById("size").value) || 600;
+  const px = parseInt(document.getElementById("size").value) || 300;
   const cm300 = (px / 300 * 2.54).toFixed(2);
   document.getElementById("sizeCm300").textContent = cm300 + " cm";
 }
 
 // ── Templates ──
 const templates = {
-  "经典": { dots:"square",  gType:"linear",  c1:"#000000", c2:"#000000", corner:"square",        cornerDot:"square", bg:"#ffffff", grad:"#000,#000" },
-  "紫焰": { dots:"rounded", gType:"linear",  c1:"#7F00FF", c2:"E100FF",  corner:"extra-rounded", cornerDot:"dot",    bg:"#ffffff", grad:"#7F00FF,#E100FF" },
-  "翠绿": { dots:"dots",    gType:"radial",  c1:"#00c853", c2:"#b2ff59", corner:"dot",           cornerDot:"dot",    bg:"#ffffff", grad:"#00c853,#b2ff59" },
-  "烈金": { dots:"classy",  gType:"linear",  c1:"#d4af37", c2:"#ffd700", corner:"extra-rounded", cornerDot:"square", bg:"#000000", grad:"#d4af37,#ffd700" },
-  "极蓝": { dots:"rounded", gType:"linear",  c1:"#00c6ff", c2:"#0072ff", corner:"extra-rounded", cornerDot:"dot",    bg:"#ffffff", grad:"#00c6ff,#0072ff" },
-  "钢灰": { dots:"square",  gType:"linear",  c1:"#444444", c2:"#999999", corner:"square",        cornerDot:"square", bg:"#ffffff", grad:"#444,#999" },
-  "热红": { dots:"dots",    gType:"radial",  c1:"#ff1744", c2:"#ff8a80", corner:"dot",           cornerDot:"dot",    bg:"#ffffff", grad:"#ff1744,#ff8a80" },
-  "海洋": { dots:"rounded", gType:"linear",  c1:"#00f2fe", c2:"#4facfe", corner:"extra-rounded", cornerDot:"dot",    bg:"#ffffff", grad:"#00f2fe,#4facfe" },
-  "霓虹": { dots:"classy",  gType:"linear",  c1:"#00ffff", c2:"#ff00ff", corner:"extra-rounded", cornerDot:"dot",    bg:"#000000", grad:"#00ffff,#ff00ff" },
-  "糖果": { dots:"dots",    gType:"radial",  c1:"#ff9a9e", c2:"#fad0c4", corner:"dot",           cornerDot:"dot",    bg:"#ffffff", grad:"#ff9a9e,#fad0c4" },
+  "经典": { dots:"square",         gType:"linear", c1:"#000000", c2:"#000000", corner:"square",        cornerDot:"square", bg:"#ffffff", grad:"#111,#555" },
+  "紫焰": { dots:"classy-rounded", gType:"linear", c1:"#7F00FF", c2:"#E100FF", corner:"extra-rounded", cornerDot:"dot",    bg:"#ffffff", grad:"#7F00FF,#E100FF" },
+  "翠绿": { dots:"dots",           gType:"radial", c1:"#00c853", c2:"#b2ff59", corner:"dot",           cornerDot:"dot",    bg:"#ffffff", grad:"#00c853,#b2ff59" },
+  "烈金": { dots:"extra-rounded",  gType:"linear", c1:"#d4af37", c2:"#ffd700", corner:"extra-rounded", cornerDot:"dot",    bg:"#000000", grad:"#d4af37,#ffd700" },
+  "极蓝": { dots:"rounded",        gType:"linear", c1:"#00c6ff", c2:"#0072ff", corner:"extra-rounded", cornerDot:"dot",    bg:"#ffffff", grad:"#00c6ff,#0072ff" },
+  "钢灰": { dots:"classy",         gType:"linear", c1:"#444444", c2:"#888888", corner:"square",        cornerDot:"square", bg:"#ffffff", grad:"#444,#888" },
+  "热红": { dots:"extra-rounded",  gType:"radial", c1:"#ff1744", c2:"#ff8a80", corner:"dot",           cornerDot:"dot",    bg:"#ffffff", grad:"#ff1744,#ff8a80" },
+  "海洋": { dots:"classy-rounded", gType:"linear", c1:"#00f2fe", c2:"#4facfe", corner:"extra-rounded", cornerDot:"dot",    bg:"#ffffff", grad:"#00f2fe,#4facfe" },
+  "霓虹": { dots:"extra-rounded",  gType:"linear", c1:"#00ffff", c2:"#ff00ff", corner:"extra-rounded", cornerDot:"dot",    bg:"#000000", grad:"#00ffff,#ff00ff" },
+  "糖果": { dots:"classy-rounded", gType:"radial", c1:"#ff9a9e", c2:"#fad0c4", corner:"dot",           cornerDot:"dot",    bg:"#ffffff", grad:"#ff9a9e,#fad0c4" },
 };
 
 // Build template buttons
@@ -922,6 +930,27 @@ function updateQR() {
     backgroundOptions:    { color: isTransparent ? "transparent" : bg }
   });
 
+  // 若自定义角标色关闭，需重建实例清除库缓存的颜色
+  if (!useCornerColor) {
+    const container = document.getElementById("qr");
+    container.innerHTML = "";
+    qr = new QRCodeStyling({
+      width: PREVIEW_PX, height: PREVIEW_PX,
+      data: text,
+      qrOptions: { errorCorrectionLevel: currentEC },
+      image: logoURL,
+      imageOptions: { imageSize: logoSize, hideBackgroundDots: true },
+      dotsOptions: {
+        type: dots,
+        gradient: { type: gradType, colorStops: [{offset:0,color:c1},{offset:1,color:c2}] }
+      },
+      cornersSquareOptions: { type: corner },
+      cornersDotOptions:    { type: cornerDot },
+      backgroundOptions:    { color: isTransparent ? "transparent" : bg }
+    });
+    qr.append(container);
+  }
+
   updateCm();
 }
 
@@ -1005,7 +1034,7 @@ document.getElementById("size").addEventListener("input", updateCm);
 updateCm();
 updateQR();
 // Activate first template btn visually
-tplRow.children[1]?.classList.add("active"); // "紫焰" default
+tplRow.children[0]?.classList.add("active"); // 默认激活"经典"
 </script>
 </body>
 </html>
