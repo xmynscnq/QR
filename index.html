@@ -673,31 +673,11 @@ input[type="range"]::-webkit-slider-thumb {
     </div>
 
     <div class="field">
-      <label class="field-label">角标颜色</label>
-      <div class="color-row">
-        <div class="color-swatch" title="角标色">
-          <input type="color" id="cornerColor" value="#7F00FF">
-        </div>
-        <span style="font-size:12px;color:var(--muted2);">不填跟随渐变</span>
-      </div>
-    </div>
-
-    <div class="field">
       <label class="field-label">角点样式</label>
       <select id="cornerDot">
         <option value="square">方块</option>
         <option value="dot">圆点</option>
       </select>
-    </div>
-
-    <div class="field">
-      <label class="field-label">角点颜色</label>
-      <div class="color-row">
-        <div class="color-swatch" title="角点色">
-          <input type="color" id="cornerDotColor" value="#E100FF">
-        </div>
-        <span style="font-size:12px;color:var(--muted2);">不填跟随渐变</span>
-      </div>
     </div>
 
     <div class="divider"></div>
@@ -793,6 +773,29 @@ input[type="range"]::-webkit-slider-thumb {
       <div class="toggle" id="transparentToggle" onclick="this.classList.toggle('on'); updateQR()"></div>
     </div>
 
+    <div class="divider"></div>
+
+    <div class="toggle-row">
+      <span class="toggle-label">自定义角标色</span>
+      <div class="toggle" id="cornerColorToggle" onclick="toggleCornerColor()"></div>
+    </div>
+
+    <div class="field" id="cornerColorField" style="display:none;">
+      <label class="field-label">角标颜色</label>
+      <div class="color-row">
+        <div class="color-swatch">
+          <input type="color" id="cornerColor" value="#000000">
+        </div>
+        <div class="color-swatch">
+          <input type="color" id="cornerDotColor" value="#000000">
+        </div>
+      </div>
+      <div style="display:flex;justify-content:space-between;margin-top:4px;">
+        <span style="font-size:10px;color:var(--muted2);">角标外框</span>
+        <span style="font-size:10px;color:var(--muted2);">角标内点</span>
+      </div>
+    </div>
+
   </aside>
 </div>
 
@@ -866,6 +869,14 @@ document.getElementById("logoSize").addEventListener("input", function() {
   updateQR();
 });
 
+function toggleCornerColor() {
+  const toggle = document.getElementById("cornerColorToggle");
+  const field  = document.getElementById("cornerColorField");
+  toggle.classList.toggle("on");
+  field.style.display = toggle.classList.contains("on") ? "block" : "none";
+  updateQR();
+}
+
 // ── Main update (preview always fixed PREVIEW_PX) ──
 function encodeForQR(str) {
   // 用 TextEncoder 转成 UTF-8 字节数组，再转成 ISO-8859-1 字符串
@@ -882,8 +893,9 @@ function updateQR() {
   const c1         = document.getElementById("color1").value;
   const c2         = document.getElementById("color2").value;
   const corner     = document.getElementById("corner").value;
-  const cornerColor    = document.getElementById("cornerColor").value;
   const cornerDot  = document.getElementById("cornerDot").value;
+  const useCornerColor = document.getElementById("cornerColorToggle").classList.contains("on");
+  const cornerColor    = document.getElementById("cornerColor").value;
   const cornerDotColor = document.getElementById("cornerDotColor").value;
   const bg         = document.getElementById("bg").value;
   const isTransparent = document.getElementById("transparentToggle").classList.contains("on");
@@ -905,8 +917,8 @@ function updateQR() {
       type: dots,
       gradient: { type: gradType, colorStops: [{offset:0,color:c1},{offset:1,color:c2}] }
     },
-    cornersSquareOptions: { type: corner, color: cornerColor },
-    cornersDotOptions:    { type: cornerDot, color: cornerDotColor },
+    cornersSquareOptions: useCornerColor ? { type: corner, color: cornerColor } : { type: corner },
+    cornersDotOptions:    useCornerColor ? { type: cornerDot, color: cornerDotColor } : { type: cornerDot },
     backgroundOptions:    { color: isTransparent ? "transparent" : bg }
   });
 
@@ -932,8 +944,9 @@ function getExportQR() {
   const c1        = document.getElementById("color1").value;
   const c2        = document.getElementById("color2").value;
   const corner    = document.getElementById("corner").value;
-  const cornerColor    = document.getElementById("cornerColor").value;
   const cornerDot = document.getElementById("cornerDot").value;
+  const useCornerColor = document.getElementById("cornerColorToggle").classList.contains("on");
+  const cornerColor    = document.getElementById("cornerColor").value;
   const cornerDotColor = document.getElementById("cornerDotColor").value;
   const bg        = document.getElementById("bg").value;
   const isTransparent = document.getElementById("transparentToggle").classList.contains("on");
@@ -954,8 +967,8 @@ function getExportQR() {
       type: dots,
       gradient: { type: gradType, colorStops: [{offset:0,color:c1},{offset:1,color:c2}] }
     },
-    cornersSquareOptions: { type: corner, color: cornerColor },
-    cornersDotOptions:    { type: cornerDot, color: cornerDotColor },
+    cornersSquareOptions: useCornerColor ? { type: corner, color: cornerColor } : { type: corner },
+    cornersDotOptions:    useCornerColor ? { type: cornerDot, color: cornerDotColor } : { type: cornerDot },
     backgroundOptions:    { color: isTransparent ? "transparent" : bg }
   });
 }
@@ -981,8 +994,8 @@ document.getElementById("gradientType").addEventListener("change", updateQR);
 document.getElementById("color1").addEventListener("input", updateQR);
 document.getElementById("color2").addEventListener("input", updateQR);
 document.getElementById("corner").addEventListener("change", updateQR);
-document.getElementById("cornerColor").addEventListener("input", updateQR);
 document.getElementById("cornerDot").addEventListener("change", updateQR);
+document.getElementById("cornerColor").addEventListener("input", updateQR);
 document.getElementById("cornerDotColor").addEventListener("input", updateQR);
 document.getElementById("bg").addEventListener("input", updateQR);
 document.getElementById("logo").addEventListener("change", updateQR);
