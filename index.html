@@ -86,13 +86,13 @@ header {
 
 #text {
   width: 100%;
-  padding: 10px 14px 10px 38px;
+  padding: 12px 16px 12px 42px;
   background: var(--surface2);
   border: 1px solid var(--border);
-  border-radius: 10px;
+  border-radius: 12px;
   color: var(--text);
   font-family: 'DM Sans', sans-serif;
-  font-size: 14px;
+  font-size: 16px;
   transition: border-color 0.2s;
   outline: none;
 }
@@ -327,9 +327,9 @@ input[type="range"]::-webkit-slider-thumb {
 .templates-row {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
-  gap: 6px;
+  gap: 8px;
   width: 100%;
-  max-width: 360px;
+  max-width: 440px;
 }
 
 .tpl-btn {
@@ -758,7 +758,7 @@ input[type="range"]::-webkit-slider-thumb {
 
 <script>
 // ── QR init (FIXED preview size, always 280px) ──
-const PREVIEW_PX = 280;
+const PREVIEW_PX = 360;
 
 let qr = new QRCodeStyling({ width: PREVIEW_PX, height: PREVIEW_PX, data: "https://example.com" });
 qr.append(document.getElementById("qr"));
