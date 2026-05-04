@@ -37,8 +37,7 @@ body {
 header {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding: 18px 28px;
+  padding: 16px 24px;
   border-bottom: 1px solid var(--border);
   background: var(--surface);
   position: sticky;
@@ -56,6 +55,7 @@ header {
   align-items: center;
   gap: 8px;
   white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .logo-dot {
@@ -66,10 +66,13 @@ header {
   box-shadow: 0 0 10px var(--accent);
 }
 
+/* Input floats in the exact center of the full header width */
 .header-input-wrap {
-  flex: 1;
-  max-width: 500px;
-  position: relative;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 420px;
+  max-width: calc(100% - 260px);
 }
 
 .header-input-wrap svg {
@@ -104,7 +107,8 @@ header {
   display: grid;
   grid-template-columns: 220px 1fr 220px;
   gap: 0;
-  min-height: calc(100vh - 61px);
+  height: calc(100vh - 61px);  /* exact fit, no overflow */
+  overflow: hidden;
 }
 
 /* ── SIDEBAR ── */
@@ -263,10 +267,11 @@ input[type="range"]::-webkit-slider-thumb {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  padding: 30px 20px;
-  gap: 24px;
+  justify-content: space-evenly;
+  padding: 24px 20px;
+  gap: 16px;
   background: radial-gradient(ellipse at center, rgba(200,255,0,0.03) 0%, transparent 70%);
+  min-height: 0;
 }
 
 .qr-stage {
@@ -532,6 +537,8 @@ input[type="range"]::-webkit-slider-thumb {
   .main {
     grid-template-columns: 1fr;
     grid-template-rows: auto auto auto;
+    height: auto;
+    overflow: visible;
   }
 
   .sidebar, .sidebar-right {
@@ -547,7 +554,7 @@ input[type="range"]::-webkit-slider-thumb {
   .section-label { grid-column: 1 / -1; }
   .divider { grid-column: 1 / -1; }
 
-  .center { padding: 30px 16px; min-height: 500px; }
+  .center { padding: 30px 16px; min-height: 480px; justify-content: center; gap: 24px; }
 
   .templates-row { grid-template-columns: repeat(5, 1fr); max-width: 100%; }
 }
@@ -556,9 +563,16 @@ input[type="range"]::-webkit-slider-thumb {
    RESPONSIVE — Mobile
 ═══════════════════════════════════════ */
 @media (max-width: 580px) {
-  header { padding: 14px 16px; flex-wrap: wrap; }
+  header { padding: 14px 16px; flex-wrap: wrap; position: relative; }
   .logo { font-size: 15px; }
-  .header-input-wrap { width: 100%; max-width: 100%; order: 3; flex: none; }
+  /* On mobile: drop absolute centering, go full-width below logo */
+  .header-input-wrap {
+    position: static;
+    transform: none;
+    width: 100%;
+    max-width: 100%;
+    order: 3;
+  }
 
   .sidebar, .sidebar-right {
     grid-template-columns: 1fr 1fr;
@@ -656,11 +670,6 @@ input[type="range"]::-webkit-slider-thumb {
       </div>
     </div>
 
-    <div class="toggle-row">
-      <span class="toggle-label">透明背景</span>
-      <div class="toggle" id="transparentToggle" onclick="this.classList.toggle('on'); updateQR()"></div>
-    </div>
-
     <div class="divider"></div>
 
     <div class="section-label">Logo 嵌入</div>
@@ -705,16 +714,12 @@ input[type="range"]::-webkit-slider-thumb {
       <div class="size-display">
         <label class="field-label" style="margin:0;">导出尺寸</label>
         <div class="size-px">
-          <input type="number" id="size" value="600" step="50" min="100" max="2000" style="font-size:22px;font-weight:800;">
+          <input type="number" id="size" value="300" step="50" min="100" max="2000" style="font-size:22px;font-weight:800;">
           <span class="size-unit">px</span>
         </div>
         <div style="display:flex;align-items:baseline;gap:6px;border-top:1px solid var(--border);padding-top:8px;margin-top:4px;">
-          <div class="size-cm" id="sizeCm">—</div>
-          <div class="size-cm-label">厘米 (96 dpi)</div>
-        </div>
-        <div style="display:flex;align-items:baseline;gap:6px;">
-          <div class="size-cm" id="sizeCm300" style="font-size:16px;color:var(--muted2);">—</div>
-          <div class="size-cm-label">厘米 (300 dpi 印刷)</div>
+          <div class="size-cm" id="sizeCm300">—</div>
+          <div class="size-cm-label">厘米（300 dpi 印刷）</div>
         </div>
       </div>
 
@@ -733,13 +738,19 @@ input[type="range"]::-webkit-slider-thumb {
 
     <div class="divider" style="grid-column:1/-1;"></div>
 
-    <div class="section-label">纠错等级</div>
+    <div class="section-label">高级功能</div>
 
+    <label class="field-label">纠错等级</label>
     <div class="ec-row">
       <button class="ec-btn" data-ec="L" onclick="setEC('L')">L<br><span style="font-weight:400;opacity:.7">低</span></button>
       <button class="ec-btn" data-ec="M" onclick="setEC('M')">M<br><span style="font-weight:400;opacity:.7">中</span></button>
       <button class="ec-btn" data-ec="Q" onclick="setEC('Q')">Q<br><span style="font-weight:400;opacity:.7">高</span></button>
       <button class="ec-btn active" data-ec="H" onclick="setEC('H')">H<br><span style="font-weight:400;opacity:.7">最高</span></button>
+    </div>
+
+    <div class="toggle-row">
+      <span class="toggle-label">透明背景</span>
+      <div class="toggle" id="transparentToggle" onclick="this.classList.toggle('on'); updateQR()"></div>
     </div>
 
   </aside>
@@ -755,9 +766,7 @@ qr.append(document.getElementById("qr"));
 // ── CM conversion ──
 function updateCm() {
   const px = parseInt(document.getElementById("size").value) || 600;
-  const cm96  = (px / 96  * 2.54).toFixed(2);
   const cm300 = (px / 300 * 2.54).toFixed(2);
-  document.getElementById("sizeCm").textContent    = cm96  + " cm";
   document.getElementById("sizeCm300").textContent = cm300 + " cm";
 }
 
